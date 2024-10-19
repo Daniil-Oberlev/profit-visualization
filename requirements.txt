@@ -1,0 +1,11 @@
+seaborn
+altair
+plotly
+hvplot
+openpyxl
+pygobject
+ipython
+holoviews
+geopandas
+geoviews
+panel
