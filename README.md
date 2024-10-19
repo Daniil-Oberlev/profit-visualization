@@ -20,13 +20,13 @@
 1. Клонируйте репозиторий:
 
    ```bash
-   git clone https://github.com/
+   git clone https://github.com/Daniil-Oberlev/profit-visualization.git
    ```
 
 2. Перейдите в директорию проекта:
 
    ```bash
-   cd
+   cd profit-visualization
    ```
 
 3. Установите необходимые зависимости:
