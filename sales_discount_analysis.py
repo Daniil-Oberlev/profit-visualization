@@ -1,49 +1,49 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
+import altair as alt
 
 
-def sales_with_discount_analysis(data):
-    """Анализ продаж с учетом скидок по категориям товаров"""
-
-    # Проверка на пустой DataFrame
-    if data.empty:
-        print("Данные пустые. Невозможно выполнить анализ.")
-        return
-
-    # Группировка данных по категориям товаров
+def sales_with_discount_analysis(df, filename="sales_discount_analysis.html"):
+    """Анализ продаж с учетом и без учета скидок по категориям товаров."""
     sales_by_category = (
-        data.groupby("Category")[["Sales", "Discount"]].sum().reset_index()
+        df.groupby(["Category", "Discount"])["Sales"].sum().reset_index()
     )
 
-    # Проверка на корректные значения скидок (меньше 1.0 и больше или равно 0)
+    sales_by_category["SalesWithoutDiscount"] = sales_by_category.apply(
+        lambda r: r["Sales"] if r["Discount"] == 0 else 0, axis=1
+    )
     sales_by_category["SalesWithDiscount"] = sales_by_category.apply(
-        lambda row: (
-            row["Sales"] * (1 - row["Discount"])
-            if 0 <= row["Discount"] < 1
-            else row["Sales"]
-        ),
-        axis=1,
+        lambda r: r["Sales"] if r["Discount"] > 0 else 0, axis=1
     )
 
-    # Визуализация продаж без учета скидок
-    plt.figure(figsize=(10, 6))
-    sns.barplot(x="Category", y="Sales", data=sales_by_category, palette="coolwarm")
-    plt.title("Продажи по категориям товаров (без учета скидок)")
-    plt.xlabel("Категория")
-    plt.ylabel("Продажи")
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-    plt.show()
-
-    # Визуализация продаж с учетом скидок
-    plt.figure(figsize=(10, 6))
-    sns.barplot(
-        x="Category", y="SalesWithDiscount", data=sales_by_category, palette="coolwarm"
+    sales_summary = (
+        sales_by_category.groupby("Category")[
+            ["SalesWithDiscount", "SalesWithoutDiscount"]
+        ]
+        .sum()
+        .reset_index()
     )
-    plt.title("Продажи по категориям товаров (с учетом скидок)")
-    plt.xlabel("Категория")
-    plt.ylabel("Продажи со скидками")
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-    plt.show()
+
+    sales_melted = pd.melt(
+        sales_summary,
+        id_vars="Category",
+        value_vars=["SalesWithDiscount", "SalesWithoutDiscount"],
+        var_name="Type",
+        value_name="Sales",
+    )
+
+    chart = (
+        alt.Chart(sales_melted)
+        .mark_bar()
+        .encode(
+            x=alt.X("Category:N", title="Категория"),
+            y=alt.Y("Sales:Q", title="Продажи"),
+            color=alt.Color(
+                "Type:N", title="Тип продаж", scale=alt.Scale(scheme="spectral")
+            ),
+        )
+        .properties(width=600, height=400, title="Продажи по категориям товаров")
+        .interactive()
+    )
+
+    chart.save(filename)
+    print(f"График анализа продаж по скидкам сохранен в '{filename}'")

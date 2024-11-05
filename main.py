@@ -5,7 +5,6 @@ from units_in_stock_analysis import units_in_stock_visualization
 from sales_discount_analysis import sales_with_discount_analysis
 from profit_per_unit_analysis import profit_per_unit_analysis
 
-# Игнорировать предупреждения
 warnings.filterwarnings("ignore")
 
 
@@ -14,7 +13,6 @@ def run_analysis():
     file_path = "dataset.xlsx"
     df = load_dataset(file_path)
 
-    # Проверка, загружен ли DataFrame и не пуст ли он
     if df is None:
         print("Ошибка: Невозможно загрузить набор данных. Проверьте наличие файла.")
         return

@@ -7,22 +7,18 @@ import numpy as np
 def profit_per_unit_analysis(data):
     """Анализ удельной прибыли на единицу товара по категориям"""
 
-    # Проверка на пустой DataFrame
     if data.empty:
         print("Данные пустые. Невозможно выполнить анализ.")
         return
 
-    # Добавляем новую колонку с расчетом удельной прибыли на единицу проданного товара
     data["ProfitPerUnit"] = data["Profit"] / np.where(
         data["Sales"] > 0, data["Sales"], 1
     )
 
-    # Группировка данных по категориям товаров
     profit_per_unit_by_category = (
         data.groupby("Category")["ProfitPerUnit"].mean().reset_index()
     )
 
-    # Визуализация средних значений удельной прибыли по категориям
     plt.figure(figsize=(10, 6))
     sns.barplot(
         x="Category",
@@ -37,7 +33,6 @@ def profit_per_unit_analysis(data):
     plt.tight_layout()
     plt.show()
 
-    # Дополнительно: Визуализация распределения удельной прибыли по товарам
     plt.figure(figsize=(10, 6))
     sns.histplot(data["ProfitPerUnit"], bins=20, kde=True, color="purple")
     plt.title("Распределение удельной прибыли на единицу товара")

@@ -1,8 +1,0 @@
-{
-  "recommendations": [
-    "ms-python.black-formatter",
-    "lone17.lone-vscode-pets",
-    "ms-python.vscode-pylance",
-    "sonarsource.sonarlint-vscode"
-  ]
-}
